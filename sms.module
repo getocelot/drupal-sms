@@ -7,6 +7,29 @@
  */
 
 /**
+ * Returns the current default gateway.
+ */
+function sms_default_gateway() {
+  return sms_gateways('gateway', variable_get('sms_default_gateway', 'log'));
+}
+
+/**
+ * Implementation of hook_gateway_info().
+ */
+function sms_gateway_info() {
+  return array(
+    'log' => array(
+      'name' => t('Log only'),
+      'send' => 'sms_send_log',
+    ),
+  );
+}
+
+function sms_send_log($number, $message, $options) {
+  watchdog('sms', 'SMS message sent to %number with the text: @message', array('%number' => $number, '@message' => $message), WATCHDOG_INFO);
+}
+
+/**
  * Implementation of hook_menu().
  */
 function sms_menu() {
@@ -71,7 +94,7 @@ function sms_admin_default_form() {
   $gateways = sms_gateways();
   
   foreach ($gateways as $identifier => $gateway) {
-    $active = ($identifier == variable_get('sms_default_gateway', 0));
+    $active = ($identifier == variable_get('sms_default_gateway', 'log'));
     $options[$identifier] = '';
     $form[$gateway['name']]['id'] = array('#value' => $identifier);
     if (function_exists($gateway['configure form'])) {
@@ -81,7 +104,7 @@ function sms_admin_default_form() {
       $form[$gateway['name']]['configure'] = array('#value' => t('No configuration options'));
     }
   }
-  $form['default'] = array('#type' => 'radios', '#options' => $options, '#default_value' => variable_get('sms_default_gateway', 0));
+  $form['default'] = array('#type' => 'radios', '#options' => $options, '#default_value' => variable_get('sms_default_gateway', 'log'));
   
   $form['submit'] = array(
     '#type' => 'submit', 
@@ -219,7 +242,7 @@ function _gateways_build() {
  *   An array of dditional properties as defined by gateway modules.
  */
 function sms_send($number, $message, $options = array()) {
-  $gateway = sms_gateways('gateway', variable_get('sms_default_gateway', 0));
+  $gateway = sms_default_gateway();
   
   foreach (module_implements('sms_send') as $module) {
     $function = $module .'_sms_send';
@@ -232,7 +255,7 @@ function sms_send($number, $message, $options = array()) {
 }
 
 function sms_number_format($number) {
-  $gateway = sms_gateways('gateway', variable_get('sms_default_gateway', 0));
+  $gateway = sms_default_gateway();
   
   if ($gateway['number_formatter'] && function_exists($gateway['number_formatter'])) {
     return $gateway['number_formatter']($number_formatter);
@@ -272,7 +295,7 @@ function sms_formatter($number, $format = 1) {
  * @return $form
  */
 function sms_send_form($required = TRUE) {
-  $gateway = sms_gateways('gateway', variable_get('sms_default_gateway', 0));
+  $gateway = sms_default_gateway();
   $form['number'] = array(
     '#type' => 'textfield',
     '#title' => t('Phone number'),
