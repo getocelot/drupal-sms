@@ -2,6 +2,11 @@
 // $Id$
 
 /**
+ * @file
+ * Adds support for sending SMS messages using the Clickatell gateway.
+ */
+
+/**
  * Implementation of hook_gateway_info().
  */
 function sms_clickatell_gateway_info() {

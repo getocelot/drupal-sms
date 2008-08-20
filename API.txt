@@ -94,7 +94,22 @@ hook_gateway_info(). Here's an example:
     return $form;
   }
 
-# @todo How to use sms_receive_incoming()
+h3. Handle incoming messages with sms_incoming()
+
+If the gateway you are integrating with has support for two-way messaging, you
+may use sms_incoming() to pass incoming messages into the SMS Framework. Your
+gateway module will be the first point of contact for messages coming in from
+the gateway. Gateway services pass incoming messages to applications in
+different ways (HTTP GET/POST, SOAP, XML-RPC, etc). Refer to the API
+documention for your gateway service.
+
+After receiveing the message and doing any neccessary pre-processing, your module
+should call sms_incoming(). Here is an example:
+
+  function my_gateway_incoming_callback() {
+    // Any neccssary processing to extract the number and message
+    sms_incoming($number, $message);
+  }
 
 h2. Writing a SMS Enabled Module
 
