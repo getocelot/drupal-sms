@@ -274,32 +274,6 @@ function _gateways_build() {
   return array($_gateways, $_names);
 }
 
-/**
- * Sends a message using the active gateway.
- * 
- * @param $number
- *   The destination number.
- * 
- * @param $message
- *   The text of the messsage to send.
- * 
- * @param $options
- *   An array of dditional properties as defined by gateway modules.
- */
-function sms_send($number, $message, $options = array()) {
-  $gateway = sms_default_gateway();
-  
-  foreach (module_implements('sms_send') as $module) {
-    $function = $module .'_sms_send';
-    $function($number, $message, $options, $gateway);
-  }
-
-  if (function_exists($gateway['send'])) {
-    $response = $gateway['send']($number, $message, $options);
-  }
-  return sms_handle_result($response, $number, $message);
-}
-
 function sms_handle_result($result, $number, $message) {
   if ($result['status']) {
     return TRUE;
