@@ -21,6 +21,12 @@ function sms_clickatell_gateway_info() {
 }
 
 function sms_clickatell_admin_form($configuration) {
+  $form['sms_clickatell_balance'] = array(
+    '#type' => 'item',
+    '#title' => t('Current balance'),
+    '#value' => sms_clickatell_balance(),
+  );
+  
   $form['sms_clickatell_ssl'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use SSL Encyption'),
@@ -91,7 +97,7 @@ function sms_clickatell_send($number, $message, $options) {
 
 function sms_clickatell_balance() {
   $result = sms_clickatell_command('getbalance');
-  return $result['data'];
+  return str_replace('Credit: ', '', $result['data']);
 }
 
 /**
@@ -149,7 +155,7 @@ function sms_clickatell_command($command = 'auth', $data = array(), $config = NU
       $result = array('status' => TRUE, 'sid' => $sid);
     }
     else {
-      $result = array('status' => TRUE);
+      $result = array('status' => TRUE, 'data' => $http_result->data);
     }
   }
   return $result;
