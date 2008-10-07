@@ -91,7 +91,7 @@ function sms_clickatell_send($number, $message, $options) {
 
 function sms_clickatell_balance() {
   $result = sms_clickatell_command('getbalance');
-  return $return['data'];
+  return $result['data'];
 }
 
 /**
@@ -135,7 +135,7 @@ function sms_clickatell_command($command = 'auth', $data = array(), $config = NU
 
   // Check for HTTP errors
   if ($http_result->error) {
-    return array('status' => FALSE, 'message' => 'An error occured during the HTTP request: @error', 'variables' => array('@error' => $http_result->error));
+    return array('status' => FALSE, 'message' => t('An error occured during the HTTP request: @error', array('@error' => $http_result->error)));
   }
   
   if ($http_result->data) {
@@ -143,17 +143,13 @@ function sms_clickatell_command($command = 'auth', $data = array(), $config = NU
     if (strpos($http_result->data, 'ERR') !== FALSE) {
       $result = array('status' => FALSE, 'message' => $http_result->data);
     }
-    else {
+    elseif ($command == 'auth') {
+      // Add Clickatell session ID to result array.
+      list($status, $sid) = explode(': ', $http_result->data);
       $result = array('status' => TRUE, 'sid' => $sid);
     }
-    switch ($command) {
-      case 'auth':
-        if ($result['status']) {
-          // Add Clickatell session ID to result array.
-          list($status, $sid) = explode(': ', $http_result->data);
-          $result['sid'] = $sid;
-        }
-        break;
+    else {
+      $result = array('status' => TRUE);
     }
   }
   return $result;
@@ -162,10 +158,10 @@ function sms_clickatell_command($command = 'auth', $data = array(), $config = NU
 function sms_clickatell_get_session_id() {
   if (variable_get('sms_clickatell_session_id_timestamp', 0) < strtotime('-10 mins')) {
     if ($result = sms_clickatell_command()) {
-      if ($result['status'] == TRUE) {
+      if ($result['status']) {
         variable_set('sms_clickatell_session_id', $result['sid']);
         variable_set('sms_clickatell_session_id_timestamp', time());
-        watchdog('sms', 'Clickatell session ID refreshed: %data', array('%data' => $result['sid']));
+        watchdog('sms', 'Clickatell session ID refreshed: %sid', array('%sid' => $result['sid']));
       }
     }
   }
