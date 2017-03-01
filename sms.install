@@ -6,12 +6,6 @@
  */
 
 /**
- * Implements hook_install().
- */
-function sms_install() {
-}
-
-/**
  * Implements hook_schema().
  */
 function sms_schema() {
@@ -32,18 +26,6 @@ function sms_schema() {
   );
 
   return $schema;
-}
-
-/**
- * Drop the now dead delta field, and change primary key to number.
- */
-function sms_update_1() {
-  $ret = array();
-  db_drop_primary_key('sms_user');
-  db_add_primary_key('sms_user', array('number'));
-  db_add_index('sms_user', 'uid', array('uid'));
-  db_drop_field('sms_user', 'delta');
-  return t('SMS database update 1 successful.');
 }
 
 /**
