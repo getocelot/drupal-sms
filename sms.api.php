@@ -13,7 +13,7 @@
 function hook_gateway_info() {
   return array(
     'my_gateway' => array(
-      'name' => 'My Gateway',
+      'name' => t('My Gateway'),
       'send' => 'my_gateway_send',
       'receive' => TRUE,
       'configure form' => 'my_gateway_admin_form',
@@ -80,7 +80,7 @@ function hook_sms_incoming($op, $number, $message, array $options) {
 function hook_sms_receipt($op, $number, $reference, $message_status, array $options) {
   switch ($op) {
     case 'pre process':
-      watchdog('sms', t('Message receipt with status @status from @number', array('@number' => $number, '@status' => $message_status)));
+      watchdog('sms', 'Message receipt with status @status from @number', array('@number' => $number, '@status' => $message_status));
       break;
     case 'post process':
       drupal_mail('sms', 'receipt', 'user@example.com', 'en', array());
