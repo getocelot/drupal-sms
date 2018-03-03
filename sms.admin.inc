@@ -354,23 +354,25 @@ function theme_sms_carriers_admin_form($variables) {
   $header = array(t('Enabled'), t('Carrier'), t('Domain'), t('Actions'));
 
   $rows = array();
-  foreach (element_children($form['status']) as $element) {
-    $name = "<div class='carrier'>";
-    $name .= "<strong>{$form['status'][$element]['#title']}</strong>";
-    $name .= "<div class='description'>{$form['status'][$element]['#description']}</div>";
-    $name .= "</div>";
-    unset($form['status'][$element]['#title']);
-    unset($form['status'][$element]['#description']);
-    $row = array(
-      'status' => drupal_render($form['status'][$element]),
-      'name' => $name,
-      'domain' => drupal_render($form['domain'][$element]), 
-      'actions' => drupal_render($form['actions'][$element]),
-    );
-    $rows[] = $row;
+  if (!empty($form['status'])) {
+    foreach (element_children($form['status']) as $element) {
+      $name = "<div class='carrier'>";
+      $name .= "<strong>{$form['status'][$element]['#title']}</strong>";
+      $name .= "<div class='description'>{$form['status'][$element]['#description']}</div>";
+      $name .= "</div>";
+      unset($form['status'][$element]['#title']);
+      unset($form['status'][$element]['#description']);
+      $row = [
+        'status' => drupal_render($form['status'][$element]),
+        'name' => $name,
+        'domain' => drupal_render($form['domain'][$element]),
+        'actions' => drupal_render($form['actions'][$element]),
+      ];
+      $rows[] = $row;
+    }
   }
   $output = '';
-  $output .= theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array( 'class' => array('sms'), 'id' => 'sms-form-table' )));
+  $output .= theme('table', array('header' => $header, 'rows' => $rows, 'empty' => t('No carriers available.'), 'attributes' => array( 'class' => array('sms'), 'id' => 'sms-form-table' )));
   $output .= drupal_render($form['submit']);
   $output .= drupal_render_children($form);
 
