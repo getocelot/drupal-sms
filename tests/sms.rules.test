@@ -96,7 +96,7 @@ class SmsContainsKeywordConditionTestCase extends SmsRulesWebTestCase {
 
    // Test whether author received SITENAME reply.
     $this->drupalGet('user/' . $author1->uid . '/my-messages');
-    $this->assertRaw('<td class="views-field views-field-message" >
+    $this->assertRaw('<td  class="views-field views-field-message">
             Hello from Drupal          </td>',
         'Author received correct SITENAME reply.');
 
