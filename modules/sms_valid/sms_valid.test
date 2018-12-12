@@ -72,7 +72,7 @@ class SmsValidWebTest extends DrupalWebTestCase {
     $edit = array(
       'prefix' => (string) rand(1, 999),
       'name' => $this->randomName(15),
-      'iso2' => 'XX',
+      'iso2' => 'AU',
       'out' => true,
       'in' => true,
       'rules' => "80+\n90-\n70\n65+\n",
@@ -206,12 +206,12 @@ class SmsValidWebTest extends DrupalWebTestCase {
     $count = count(sms_valid_get_all_rulesets());
 
     $ruleset1 = $this->randomRuleset();
-    $ruleset1['iso2'] = 'XX';
+    $ruleset1['iso2'] = 'AU';
     $ruleset1['rules'] = sms_valid_text_to_rules("80- # Test 1\n90+ # Test 2");
     sms_valid_save_ruleset($ruleset1);
 
     $ruleset2 = $this->randomRuleset();
-    $ruleset2['iso2'] = 'XX';
+    $ruleset2['iso2'] = 'AU';
     $ruleset2['rules'] = sms_valid_text_to_rules("81- # Test 1\n91+ # Test 2");
     sms_valid_save_ruleset($ruleset2);
 
@@ -231,7 +231,7 @@ class SmsValidWebTest extends DrupalWebTestCase {
 
     // php array comparison needs sorting.
     $expected = array($ruleset1['prefix'], $ruleset2['prefix']);
-    $actual = sms_valid_get_prefixes_for_iso2('XX');
+    $actual = sms_valid_get_prefixes_for_iso2('AU');
     sort($expected); sort($actual);
     $this->assertEqual($expected, $actual, 'sms_valid_get_prefixes_for_iso2() functional.');
 

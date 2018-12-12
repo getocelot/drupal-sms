@@ -293,6 +293,8 @@ function sms_valid_admin_rulesets_form_submit($form, &$form_state) {
  * @ingroup forms
  */
 function sms_valid_admin_ruleset_form($form, &$form_state, $prefix = NULL) {
+  include_once DRUPAL_ROOT . '/includes/locale.inc';
+
   if ($prefix === NULL) {
     $ruleset = FALSE;
   }
@@ -342,27 +344,14 @@ function sms_valid_admin_ruleset_form($form, &$form_state, $prefix = NULL) {
     '#default_value' => ($ruleset) ? $ruleset['name'] : '',
   );
 
-  // Display a proper country list if the countries_api module is loaded.
-  if (function_exists('countries_api_get_array')) {
-    $options[''] = '(none)';
-    $options = array_merge($options, countries_api_get_array());
-    $form['ruleset']['iso2'] = array(
-      '#type' => 'select',
-      '#title' => t('Associated country (optional)'),
-      '#options' => $options,
-      '#default_value' => ($ruleset) ? $ruleset['iso2'] : '',
-    );
-  }
-  else {
-    $form['ruleset']['iso2'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Country code (ISO 3166-1 alpha-2) (optional)'),
-      '#size' => 2,
-      '#maxlength' => 2,
-      '#default_value' => ($ruleset) ? $ruleset['iso2'] : '',
-      '#description' => 'This would be a nice drop-down box if you had the Countries API module enabled.',
-    );
-  }
+  $options[''] = '(none)';
+  $options = array_merge($options, country_get_list());
+  $form['ruleset']['iso2'] = array(
+    '#type' => 'select',
+    '#title' => t('Associated country (optional)'),
+    '#options' => $options,
+    '#default_value' => ($ruleset) ? $ruleset['iso2'] : '',
+  );
 
   $form['ruleset']['out'] = array(
     '#type' => 'checkbox',
