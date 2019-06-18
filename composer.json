@@ -29,6 +29,7 @@
     "drupal/sms_blast": "self.version",
     "drupal/sms_devel": "self.version",
     "drupal/sms_sendtophone": "self.version",
-    "drupal/sms_user": "self.version"
+    "drupal/sms_user": "self.version",
+    "drupal/sms": "self.version"
   }
 }
